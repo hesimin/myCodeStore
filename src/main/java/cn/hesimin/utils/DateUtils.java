@@ -1,5 +1,6 @@
 package cn.hesimin.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.text.ParseException;
@@ -18,91 +19,114 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 			"yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyyMMdd"};
 
 	/**
-	 * 得到当前日期字符串 格式（yyyy-MM-dd）
+	 * 格式化当前日期
+	 *
+	 * @return yyyy-MM-dd
 	 */
 	public static String getDate() {
 		return getDate("yyyy-MM-dd");
 	}
 
 	/**
-	 * 得到当前日期字符串 格式（yyyy-MM-dd） pattern可以为："yyyy-MM-dd" "HH:mm:ss" "E"
+	 * 得到当前日期字符串
+	 *
+	 * @param pattern 日期格式可以为："yyyy-MM-dd" "HH:mm:ss" "E"等
+	 * @return 格式化后的单曲日期
 	 */
 	public static String getDate(String pattern) {
 		return DateFormatUtils.format(new Date(), pattern);
 	}
 
 	/**
-	 * 得到日期字符串 默认格式（yyyy-MM-dd） pattern可以为："yyyy-MM-dd" "HH:mm:ss" "E"
-	 */
-	public static String formatDate(Date date, Object... pattern) {
-		String formatDate = null;
-		if (pattern != null && pattern.length > 0) {
-			formatDate = DateFormatUtils.format(date, pattern[0].toString());
-		} else {
-			formatDate = DateFormatUtils.format(date, "yyyy-MM-dd");
-		}
-		return formatDate;
-	}
-
-	/**
-	 * 得到日期时间字符串，转换格式（yyyy-MM-dd HH:mm:ss）
-	 */
-	public static String formatDateTime(Date date) {
-		return formatDate(date, "yyyy-MM-dd HH:mm:ss");
-	}
-
-	/**
-	 * 得到当前时间字符串 格式（HH:mm:ss）
+	 * 获取当前时间字符串
+	 *
+	 * @return HH:mm:ss
 	 */
 	public static String getTime() {
 		return formatDate(new Date(), "HH:mm:ss");
 	}
 
 	/**
-	 * 得到当前日期和时间字符串 格式（yyyy-MM-dd HH:mm:ss）
+	 * 获取当前时间和日期字符串
+	 *
+	 * @return yyyy-MM-dd HH:mm:ss
 	 */
 	public static String getDateTime() {
 		return formatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
 	}
 
 	/**
-	 * 得到当前年份字符串 格式（yyyy）
+	 * 格式花日期
+	 *
+	 * @param date    日期
+	 * @param pattern 格式
+	 * @return 格式化后的日期
+	 */
+	public static String formatDate(Date date, String pattern) {
+		if (date == null || StringUtils.isBlank(pattern)) {
+			throw new IllegalArgumentException();
+		}
+		return DateFormatUtils.format(date, pattern);
+	}
+
+	/**
+	 * 格式化日期
+	 *
+	 * @param date 被格式化日期
+	 * @return yyyy-MM-dd HH:mm:ss
+	 */
+	public static String formatDateTime(Date date) {
+		return formatDate(date, "yyyy-MM-dd HH:mm:ss");
+	}
+
+
+	/**
+	 * 获取当前年份
+	 *
+	 * @return yyyy
 	 */
 	public static String getYear() {
 		return formatDate(new Date(), "yyyy");
 	}
 
 	/**
-	 * 得到当前月份字符串 格式（MM）
+	 * 获取当前月份
+	 *
+	 * @return MM
 	 */
 	public static String getMonth() {
 		return formatDate(new Date(), "MM");
 	}
 
 	/**
-	 * 得到当天字符串 格式（dd）
+	 * 获取当前是月的第几日
+	 *
+	 * @return dd
 	 */
 	public static String getDay() {
 		return formatDate(new Date(), "dd");
 	}
 
 	/**
-	 * 得到当前星期字符串 格式（E）星期几
+	 * 获取星期字符串
+	 *
+	 * @return E
 	 */
 	public static String getWeek() {
 		return formatDate(new Date(), "E");
 	}
 
 	/**
-	 * 日期型字符串转化为日期 格式 { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm",
+	 * 日期型字符串转化为日期
+	 * <p>格式 { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm",
 	 * "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyyMMdd" }
 	 */
-	public static Date parseDate(Object str) {
-		if (str == null) {
+	public static Date parseDate(String str) {
+		if (StringUtils.isBlank(str)) {
 			return null;
 		}
 		try {
-			return parseDate(str.toString(), parsePatterns);
+			return parseDate(str, parsePatterns);
 		} catch (ParseException e) {
 			return null;
 		}
@@ -200,33 +224,27 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	 * @param preDateStr
 	 * @param nextDateStr
 	 * @return result
-	 * @author: weihuang.peng
 	 */
-	public static int compareDate(Object preDateStr, Object nextDateStr) {
-		int result = 0;
+	public static int compareDate(String preDateStr, String nextDateStr) {
 		Date preDate = parseDate(preDateStr);
 		Date nextDate = parseDate(nextDateStr);
-		try {
-			result = preDate.compareTo(nextDate);
-		} catch (Exception e) {
-			result = 0;
-			e.printStackTrace();
-		}
-		return result;
+		return preDate.compareTo(nextDate);
 	}
 
 	/**
 	 * 获取某一天的前几天或者后几天，根据数字符号决定天数
 	 *
-	 * @param date
+	 * @param dateStr
 	 * @param days
 	 * @return
-	 * @author: weihuang.peng
 	 */
-	public static String getPastDayStr(Object dateObj, int days) {
-		Date date = parseDate(dateObj);
+	public static String getPastDayStr(String dateStr, int days) {
+		Date date = parseDate(dateStr);
+		if (date == null) {
+			throw new IllegalArgumentException("dateStr error.");
+		}
 		long time = date.getTime() + days * (long) (24 * 60 * 60 * 1000);
-		return formatDate(new Date(time));
+		return formatDate(new Date(time), "yyyy-MM-dd HH:mm:ss");
 	}
 
 	/**
@@ -235,13 +253,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	 * @param preDateStr
 	 * @param nextDateStr
 	 * @return
-	 * @author: huiyang.yu
 	 */
-	public static long getSubactDate(Object preDateStr, Object nextDateStr) {
+	public static long getSubactDate(String preDateStr, String nextDateStr) {
 		Date preDate = parseDate(preDateStr);
 		Date nextDate = parseDate(nextDateStr);
-		long result = (preDate.getTime() - nextDate.getTime()) / 1000L;
-		return result;
+		return (preDate.getTime() - nextDate.getTime()) / 1000L;
 	}
 
 	/**
@@ -250,9 +266,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	 * @param preDateStr
 	 * @param nextDateStr
 	 * @return
-	 * @author: weihuang.peng
 	 */
-	public static long getDifferDate(Object preDateStr, Object nextDateStr) {
+	public static long getDifferDate(String preDateStr, String nextDateStr) {
 		return getSubactDate(preDateStr, nextDateStr) / (60 * 60 * 24L);
 	}
 
@@ -264,13 +279,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	 * @param updateDate 传入日期
 	 * @param updateTime 传入时间
 	 * @return 日期或者 xx小时前||xx分钟前||xx秒前
-	 * @author: huiyang.yu
 	 */
 	public static String getNewUpdateDateString(String updateDate, String updateTime) {
 		String result = updateDate;
-		long time = 0;
 		if (updateDate.equals(DateUtils.getDate())) {
-			time = DateUtils.getSubactDate(DateUtils.getDateTime(), updateDate
+			long time = DateUtils.getSubactDate(DateUtils.getDateTime(), updateDate
 					+ " " + updateTime);
 			if (time >= 3600) {
 				result = time / 3600 + "小时前";
