@@ -12,7 +12,7 @@ import java.util.Date;
  * 日期工具类
  * <p>继承org.apache.commons.lang3.time.DateUtils类
  */
-public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
+public class DateUtil extends org.apache.commons.lang3.time.DateUtils {
 
 	private static String[] parsePatterns = {"yyyy-MM-dd",
 			"yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy/MM/dd",
@@ -282,8 +282,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	 */
 	public static String getNewUpdateDateString(String updateDate, String updateTime) {
 		String result = updateDate;
-		if (updateDate.equals(DateUtils.getDate())) {
-			long time = DateUtils.getSubactDate(DateUtils.getDateTime(), updateDate
+		if (updateDate.equals(DateUtil.getDate())) {
+			long time = DateUtil.getSubactDate(DateUtil.getDateTime(), updateDate
 					+ " " + updateTime);
 			if (time >= 3600) {
 				result = time / 3600 + "小时前";
