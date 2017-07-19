@@ -5,6 +5,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -25,6 +26,7 @@ import java.util.regex.Pattern;
 
 /**
  * 操作日志切面
+ *
  * @author hesimin 2017-07-07
  */
 @Aspect
@@ -57,9 +59,9 @@ public class SysOperationLogAspect {
 
             if (sysOperationLog.args()) {
                 if (args != null && args.length > 0) {
-                    List argList = new ArrayList();
+                    List argList = new ArrayList(args.length);
                     for (Object arg : args) {
-                        if (!ServletRequest.class.isInstance(arg) && !ServletResponse.class.isInstance(arg)) {
+                        if (!isExcludeArgsClass(sysOperationLog, arg)) {
                             argList.add(arg);
                         }
                     }
@@ -83,6 +85,21 @@ public class SysOperationLogAspect {
             }
         }
         return result;
+    }
+
+    private boolean isExcludeArgsClass(SysOperationLog sysOperationLog, Object arg) {
+        // spring 的这几个类不需要记录
+        if (ServletRequest.class.isInstance(arg) || ServletResponse.class.isInstance(arg) || Model.class.isInstance(arg)) {
+            return true;
+        }
+        if (sysOperationLog.excludeArgsClass() != null && sysOperationLog.excludeArgsClass().length > 0) {
+            for (Class eClass : sysOperationLog.excludeArgsClass()) {
+                if (eClass.isInstance(arg)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static final Pattern GROUP_PATTERN = Pattern.compile("(?<=\\{)[^\\}]+");

@@ -16,6 +16,9 @@ public @interface SysOperationLog {
     // 是否记录参数
     boolean args() default true;
 
+    // 参数上不需要记录的类
+    Class[] excludeArgsClass() default {};
+
     // 是否记录结果
     boolean result() default true;
 
